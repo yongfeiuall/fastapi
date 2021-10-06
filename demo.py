@@ -6,10 +6,10 @@ from typing import Optional, List
 
 from models.database import SessionLocal, Base, engine
 
-Base.metadata.create_all(bind=engine) #数据库初始化，如果没有库或者表，会自动创建
-
-# 实例化 FastAPI
-app = FastAPI()
+# Base.metadata.create_all(bind=engine) #数据库初始化，如果没有库或者表，会自动创建
+#
+# # 实例化 FastAPI
+# app = FastAPI()
 
 # 创建一个路径
 '''
@@ -344,6 +344,7 @@ app = FastAPI()
 #         raise HTTPException(status_code=400, detail='User not found')
 #     return db_user
 
+##############################################3
 # from fastapi.responses import HTMLResponse
 # from fastapi.staticfiles import StaticFiles
 # from fastapi.templating import Jinja2Templates
@@ -359,3 +360,30 @@ app = FastAPI()
 #     if not db_user:
 #         raise HTTPException(status_code=404, detail="User not found")
 #     return templates.TemplateResponse('index.html', {'request': request, 'username': db_user.email})
+
+##############################################3
+from jose import jwt
+from datetime import datetime, timedelta
+
+# 加密密钥
+SECRET_KEY = "testjwt"
+
+# 设置过期时间 示例5分钟
+expire = datetime.utcnow() + timedelta(minutes=5)
+
+# exp 是固定写法必须得传  username和uid是自己存的值
+to_encode = {"exp": expire, "username": "admin", "uid": "12345"}
+
+# 生成token
+token = jwt.encode(to_encode, SECRET_KEY, algorithm="HS256")
+
+print(token)
+
+from jose.exceptions import ExpiredSignatureError, JWTError
+try:
+    payload = jwt.decode(token, SECRET_KEY, algorithms="HS256" )
+    print(payload)
+except ExpiredSignatureError as e:
+    print("token过期")
+except JWTError as e:
+    print("token验证失败")
